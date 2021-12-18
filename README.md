@@ -1,3 +1,4 @@
+<img src ="https://user-images.githubusercontent.com/90010213/146630577-fff43a01-0e02-48ea-8d5c-40a7bdaddb4a.png" width="100" height = "100"/>
 Street Sweeper Mania was released to the App Store on April 13, 2020. It has recieved:
 
 - 3,000+ product page views
@@ -26,8 +27,4 @@ Some main takeaways from this project were:
   - advertising the final product
   - maintaining updates
 
-Street Sweeper Mania Highlights:
-![11 Pro Max Game](https://user-images.githubusercontent.com/90010213/146630489-3a50f9d7-25dc-4666-ad15-cdfea5f3f626.png)
-![iTunesArtwork@3x](https://user-images.githubusercontent.com/90010213/146630577-fff43a01-0e02-48ea-8d5c-40a7bdaddb4a.png)
-![iPad Pro (12 9-inch) Customize](https://user-images.githubusercontent.com/90010213/146630508-d02613e1-a6d7-44db-b932-abb1883059eb.png)
-
+<img src ="https://user-images.githubusercontent.com/90010213/146630489-3a50f9d7-25dc-4666-ad15-cdfea5f3f626.png" width = "220" height = "450"/>    <img src ="https://user-images.githubusercontent.com/90010213/146630508-d02613e1-a6d7-44db-b932-abb1883059eb.png" width = "220" height = "450"/>   <img src ="https://user-images.githubusercontent.com/90010213/146630724-54773877-026f-4e92-9cd3-2c7af653fc72.png" width = "220" height = "450"/>   <img src ="https://user-images.githubusercontent.com/90010213/146630858-ee038754-e293-4347-98d6-4ed6ee31fdac.jpg" width = "220" height = "450"/>
