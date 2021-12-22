@@ -2,8 +2,7 @@
 //  GameScene.swift
 //  StreetSweeper
 //
-//  Created by Emmett Breen on 4/3/20.
-//  Copyright © 2020 Emmett Breen. All rights reserved.
+//  Copyright © 2021 Emmett Breen. All rights reserved.
 //
 
 import SpriteKit
@@ -21,11 +20,7 @@ class GameScene: SKScene {
     var scoreLabel : SKLabelNode!
     var gameTimer : Timer!
     
-    var dirtLTimer : Timer!
-    var dirtRTimer : Timer!
-    var trashLTimer : Timer!
-    var trashRTimer : Timer!
-    var dumpsterTimer : Timer!
+    var managerTimer : Timer!
     
     var moveTimer : Timer!
     
@@ -41,7 +36,7 @@ class GameScene: SKScene {
     var switchLabel2 : SKLabelNode!
     var prev = 0
     
-    var bools = [true, false, false, false]
+    var bools = [true, false, false, false, false, false]
     
     var canSpawn = true
     
@@ -165,21 +160,11 @@ class GameScene: SKScene {
         //frequency of creation
         gameTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(incTimer), userInfo: nil, repeats: true)
         
-        //timer for function to animate sprites
-        dumpsterTimer = Timer.scheduledTimer(timeInterval: 0.85, target: self, selector: #selector(dumpsterSpawn), userInfo: nil, repeats: true)
-        dirtLTimer = Timer.scheduledTimer(timeInterval: 0.85, target: self, selector: #selector(dirtLSpawn), userInfo: nil, repeats: true)
-        dirtRTimer = Timer.scheduledTimer(timeInterval: 0.85, target: self, selector: #selector(dirtRSpawn), userInfo: nil, repeats: true)
-        trashLTimer = Timer.scheduledTimer(timeInterval: 0.85, target: self, selector: #selector(trashLSpawn), userInfo: nil, repeats: true)
-        trashRTimer = Timer.scheduledTimer(timeInterval: 0.85, target: self, selector: #selector(trashRSpawn), userInfo: nil, repeats: true)
-        
-        
-        lineTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(lineSpawn), userInfo: nil, repeats: true)
+        managerTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(manager), userInfo: nil, repeats: true)
         
         timeBonusTimer = Timer.scheduledTimer(timeInterval: 28, target: self, selector: #selector(timeBonus), userInfo: nil, repeats: true)
         
         switchTimer = Timer.scheduledTimer(timeInterval: 60, target: self, selector: #selector(switchButtons), userInfo: nil, repeats: true)
-        
-        moveTimer = Timer.scheduledTimer(timeInterval: 0.85, target: self, selector: #selector(moveObjs), userInfo: nil, repeats: true)
         
         healthBar = SKSpriteNode(imageNamed: "healthBar")
         healthBar.position = CGPoint(x: 3 * frame.size.width / 10, y: frame.size.height / 4)
@@ -213,7 +198,7 @@ class GameScene: SKScene {
     }
     
     //creates road lines
-    @objc func lineSpawn(){
+    func lineSpawn(){
         //if trashBar.size.height <= frame.size.height / 6 && healthBar.size.height >= 0{
         let line = SKSpriteNode(imageNamed: "line")
         let line2 = SKSpriteNode(imageNamed: "line")
@@ -233,11 +218,10 @@ class GameScene: SKScene {
         line.run(SKAction.sequence(actionArray))
         line2.run(SKAction.sequence(actionArray2))
     }
-   // }
     
     //timer label function
     @objc func incTimer(){
-        if healthBar.size.height >= 0 && trashBar.size.height < frame.size.height / 6 && missBar.size.height < frame.size.height / 6 {
+        if healthBar.size.height > 0 && missBar.size.height > 0 && trashBar.size.height > 0 {
             time += 1
         }
         timeLabel.text = "Time: \(time)"
@@ -251,7 +235,7 @@ class GameScene: SKScene {
         timeBonusLabel.fontColor = UIColor.white
         timeBonusLabel.zPosition = 1
         self.addChild(timeBonusLabel)
-        if healthBar.size.height >= 0 && trashBar.size.height < frame.size.height / 6 && missBar.size.height < frame.size.height / 6 {
+        if healthBar.size.height > 0 && missBar.size.height > 0 && trashBar.size.height > 0 {
             score += bonus
         }
         let wait = SKAction.wait(forDuration: 3)
@@ -261,11 +245,22 @@ class GameScene: SKScene {
         bonus += 3
     }
     
+    
+    @objc func manager(){
+        lineSpawn()
+        moveObjs()
+        dirtLSpawn()
+        dirtRSpawn()
+        dumpsterSpawn()
+        trashLSpawn()
+        trashRSpawn()
+    }
+    
     //dictates speed of objects down screen
     //time of animation
     let animationDuration : TimeInterval = 6
     
-    @objc func dirtLSpawn(){
+    func dirtLSpawn(){
         bools.shuffle()
         if Foundation.UserDefaults.standard.bool(forKey: "Toxic") == false{
             obj = SKSpriteNode(imageNamed: "dirt")
@@ -274,7 +269,7 @@ class GameScene: SKScene {
             obj = SKSpriteNode(imageNamed: "acid")
         }
         if bools[0] && time % 60 > 6 && time % 60 < 56 {
-            obj.position = CGPoint(x: -frame.size.width / 12, y: frame.size.height / 2 + (frame.size.height / CGFloat(animationDuration)))
+            obj.position = CGPoint(x: -frame.size.width / 12, y: frame.size.height / 2)
             obj.size = CGSize(width: frame.size.width / 8, height: frame.size.height / 12)
             self.addChild(obj)
             var actionArray = [SKAction] ()
@@ -285,7 +280,7 @@ class GameScene: SKScene {
         }
     }
     
-    @objc func dirtRSpawn(){
+    func dirtRSpawn(){
         bools.shuffle()
         if Foundation.UserDefaults.standard.bool(forKey: "Toxic") == false{
             obj = SKSpriteNode(imageNamed: "dirt")
@@ -294,7 +289,7 @@ class GameScene: SKScene {
             obj = SKSpriteNode(imageNamed: "acid")
         }
         if bools[0] && time % 60 > 6 && time % 60 < 56 {
-            obj.position = CGPoint(x: frame.size.width / 12, y: frame.size.height / 2 + (frame.size.height / CGFloat(animationDuration)))
+            obj.position = CGPoint(x: frame.size.width / 12, y: frame.size.height / 2)
             obj.size = CGSize(width: frame.size.width / 8, height: frame.size.height / 12)
             self.addChild(obj)
             var actionArray = [SKAction] ()
@@ -305,7 +300,7 @@ class GameScene: SKScene {
         }
     }
     
-    @objc func trashLSpawn(){
+    func trashLSpawn(){
         bools.shuffle()
         if Foundation.UserDefaults.standard.bool(forKey: "Toxic") == false{
             obj = SKSpriteNode(imageNamed: "trash")
@@ -314,7 +309,7 @@ class GameScene: SKScene {
             obj = SKSpriteNode(imageNamed: "acidcan")
         }
         if bools[0] && time % 60 > 6 && time % 60 < 56 && canSpawn{
-            obj.position = CGPoint(x: -frame.size.width / 6, y: frame.size.height / 2 + (frame.size.height / CGFloat(animationDuration)))
+            obj.position = CGPoint(x: -frame.size.width / 6, y: frame.size.height / 2)
             obj.size = CGSize(width: frame.size.width / 8, height: frame.size.height / 12)
             self.addChild(obj)
             var actionArray = [SKAction] ()
@@ -325,7 +320,7 @@ class GameScene: SKScene {
         }
     }
     
-    @objc func trashRSpawn(){
+    func trashRSpawn(){
         bools.shuffle()
         if Foundation.UserDefaults.standard.bool(forKey: "Toxic") == false{
             obj = SKSpriteNode(imageNamed: "trash")
@@ -334,7 +329,7 @@ class GameScene: SKScene {
             obj = SKSpriteNode(imageNamed: "acidcan")
         }
         if bools[0] && time % 60 > 6 && time % 60 < 56 && canSpawn{
-            obj.position = CGPoint(x: frame.size.width / 6, y: frame.size.height / 2 + (frame.size.height / CGFloat(animationDuration)))
+            obj.position = CGPoint(x: frame.size.width / 6, y: frame.size.height / 2)
             obj.size = CGSize(width: frame.size.width / 8, height: frame.size.height / 12)
             self.addChild(obj)
             var actionArray = [SKAction] ()
@@ -345,27 +340,26 @@ class GameScene: SKScene {
         }
     }
     
-    @objc func dumpsterSpawn(){
+    func dumpsterSpawn(){
         bools.shuffle()
-        canSpawn = true
         if Foundation.UserDefaults.standard.bool(forKey: "Toxic") == false{
             obj = SKSpriteNode(imageNamed: "dumpster")
         }
         else{
             obj = SKSpriteNode(imageNamed: "aciddumpster")
         }
-        if bools[0] && time > 13 && time % 2 == 0 || time - lastDumpsterSpawn > 20 {
+        if bools[0] && time > 13 && time % 3 == 0 || time - lastDumpsterSpawn > 20 {
             canSpawn = false
             lastDumpsterSpawn = time
             obj.size = CGSize(width: frame.size.width / 5, height: frame.size.height / 12)
             var actionArray = [SKAction] ()
             if time % 2 == 0{
-                obj.position = CGPoint(x: frame.size.width / 6, y: frame.size.height / 2 + (frame.size.height / CGFloat(animationDuration)))
+                obj.position = CGPoint(x: frame.size.width / 6, y: frame.size.height / 2)
                 self.addChild(obj)
                 actionArray.append(SKAction.move(to: CGPoint(x: frame.size.width / 4, y: -frame.size.height / 2), duration: animationDuration))
             }
             else{
-                obj.position = CGPoint(x: -frame.size.width / 6, y: frame.size.height / 2 + (frame.size.height / CGFloat(animationDuration)))
+                obj.position = CGPoint(x: -frame.size.width / 6, y: frame.size.height / 2)
                     self.addChild(obj)
                 actionArray.append(SKAction.move(to: CGPoint(x: -frame.size.width / 4, y: -frame.size.height / 2), duration: animationDuration))
             }
@@ -382,7 +376,7 @@ class GameScene: SKScene {
         let num = dirtLSprites.count
         //TODO: Make buttons flash y/n
         while i < dirtLSprites.count {
-            if dirtLSprites[i].position.y < frame.size.height / 6 && dirtLSprites[i].position.y > -frame.size.height / 12 {
+            if dirtLSprites[i].position.y < frame.size.height / 6 && dirtLSprites[i].position.y > -frame.size.height / 8 {
                 dirtLSprites[i].removeFromParent()
                 dirtLSprites.remove(at: i)
                 loseCapacity()
@@ -394,7 +388,7 @@ class GameScene: SKScene {
             }
         }
         if miss == num {
-            loseCapacity()
+            loseMisses()
         }
     }
     
@@ -403,7 +397,7 @@ class GameScene: SKScene {
         var miss = 0
         let num = dirtRSprites.count
         while i < dirtRSprites.count {
-            if dirtRSprites[i].position.y < frame.size.height / 6 && dirtRSprites[i].position.y > -frame.size.height / 12 {
+            if dirtRSprites[i].position.y < frame.size.height / 6 && dirtRSprites[i].position.y > -frame.size.height / 8 {
                 dirtRSprites[i].removeFromParent()
                 dirtRSprites.remove(at: i)
                 loseCapacity()
@@ -424,7 +418,7 @@ class GameScene: SKScene {
         var miss = 0
         let num = trashLSprites.count
         while i < trashLSprites.count {
-            if trashLSprites[i].position.y < frame.size.height / 6 && trashLSprites[i].position.y > -frame.size.height / 12 {
+            if trashLSprites[i].position.y < frame.size.height / 6 && trashLSprites[i].position.y > -frame.size.height / 8 {
                 trashLSprites[i].removeFromParent()
                 trashLSprites.remove(at: i)
                 loseCapacity()
@@ -445,7 +439,7 @@ class GameScene: SKScene {
         var miss = 0
         let num = trashRSprites.count
         while i < trashRSprites.count {
-            if trashRSprites[i].position.y < frame.size.height / 6 && trashRSprites[i].position.y > -frame.size.height / 12 {
+            if trashRSprites[i].position.y < frame.size.height / 6 && trashRSprites[i].position.y > -frame.size.height / 8 {
                 trashRSprites[i].removeFromParent()
                 trashRSprites.remove(at: i)
                 loseCapacity()
@@ -466,7 +460,7 @@ class GameScene: SKScene {
         var miss = 0
         let num = dumpsterSprites.count
         while i < dumpsterSprites.count {
-            if dumpsterSprites[i].position.y < frame.size.height / 6 && dumpsterSprites[i].position.y > -frame.size.height / 12 {
+            if dumpsterSprites[i].position.y < frame.size.height / 6 && dumpsterSprites[i].position.y > -frame.size.height / 8 {
                 dumpsterSprites.remove(at: i)
                 trashBar.size.height = frame.size.height / 6
                 trashBar.position.y = frame.size.height / 4
@@ -484,14 +478,14 @@ class GameScene: SKScene {
     }
     
     //function to keep track of objs y pos
-    @objc func moveObjs(){
+    func moveObjs(){
         var i = 0
         var j = 0
         var k = 0
         var l = 0
         var m = 0
         while i < dirtLSprites.count {
-            dirtLSprites[i].position.y -= (frame.size.height / CGFloat(animationDuration))
+            dirtLSprites[i].position.y -= 0.5 * (frame.size.height / CGFloat(animationDuration))
             if dirtLSprites[i].position.y <= -frame.size.height / 2 {
                 loseHealth()
                 //removes objects below frame from array
@@ -503,7 +497,7 @@ class GameScene: SKScene {
             }
         }
         while j < dirtRSprites.count {
-            dirtRSprites[j].position.y -= (frame.size.height / CGFloat(animationDuration))
+            dirtRSprites[j].position.y -= 0.5 * (frame.size.height / CGFloat(animationDuration))
             if dirtRSprites[j].position.y <= -frame.size.height / 2 {
                 loseHealth()
                 dirtRSprites.remove(at: j)
@@ -513,7 +507,7 @@ class GameScene: SKScene {
             }
         }
         while k < trashLSprites.count {
-            trashLSprites[k].position.y -= (frame.size.height / CGFloat(animationDuration))
+            trashLSprites[k].position.y -= 0.5 * (frame.size.height / CGFloat(animationDuration))
             if trashLSprites[k].position.y <= -frame.size.height / 2 {
                 loseHealth()
                 trashLSprites.remove(at: k)
@@ -523,7 +517,7 @@ class GameScene: SKScene {
             }
         }
         while l < trashRSprites.count {
-            trashRSprites[l].position.y -= (frame.size.height / CGFloat(animationDuration))
+            trashRSprites[l].position.y -= 0.5 * (frame.size.height / CGFloat(animationDuration))
             if trashRSprites[l].position.y <= -frame.size.height / 2 {
                 loseHealth()
                 trashRSprites.remove(at: l)
@@ -533,7 +527,7 @@ class GameScene: SKScene {
             }
         }
         while m < dumpsterSprites.count {
-            dumpsterSprites[m].position.y -= (frame.size.height / CGFloat(animationDuration))
+            dumpsterSprites[m].position.y -= 0.5 * (frame.size.height / CGFloat(animationDuration))
             if dumpsterSprites[m].position.y <= -frame.size.height / 2 {
                 dumpsterSprites.remove(at: m)
             }
@@ -602,8 +596,8 @@ class GameScene: SKScene {
         switchLabel2.zPosition = 1
         
         if count == 1 {
-            sweepLNode.position = CGPoint(x: dumpButtonNode.size.width + Hgap, y: -frame.size.height / 3 + Vgap)
-            sweepRNode.position = CGPoint(x: -dumpButtonNode.size.width - Hgap, y: -frame.size.height / 3 + Vgap)
+            sweepLNode.position = CGPoint(x: dumpButtonNode.size.width + Hgap, y: sweepLNode.position.y)
+            sweepRNode.position = CGPoint(x: -dumpButtonNode.size.width - Hgap, y:sweepRNode.position.y)
             self.addChild(switchLabel2)
             let wait = SKAction.wait(forDuration: 5)
             let remove = SKAction.removeFromParent()
@@ -611,8 +605,8 @@ class GameScene: SKScene {
             switchLabel2.run(sequence)
         }
         if count == 2 {
-            collectRNode.position = CGPoint(x: -dumpButtonNode.size.width - Hgap, y: -frame.size.height / 3 - Vgap)
-            collectLNode.position = CGPoint(x: dumpButtonNode.size.width + Hgap, y: -frame.size.height / 3 - Vgap)
+            collectRNode.position = CGPoint(x: -dumpButtonNode.size.width - Hgap, y: collectRNode.position.y)
+            collectLNode.position = CGPoint(x: dumpButtonNode.size.width + Hgap, y: collectLNode.position.y)
             switchLabel2.text = "Collect Left and Collect Right!"
             self.addChild(switchLabel2)
             let wait = SKAction.wait(forDuration: 5)
