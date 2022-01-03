@@ -28,4 +28,5 @@ Some main takeaways from this project were:
   - advertising the final product
   - maintaining updates
 
+## Screenshots
 <img src ="https://user-images.githubusercontent.com/90010213/146630489-3a50f9d7-25dc-4666-ad15-cdfea5f3f626.png" width = "220" height = "450"/>    <img src ="https://user-images.githubusercontent.com/90010213/146630508-d02613e1-a6d7-44db-b932-abb1883059eb.png" width = "220" height = "450"/>   <img src ="https://user-images.githubusercontent.com/90010213/146630724-54773877-026f-4e92-9cd3-2c7af653fc72.png" width = "220" height = "450"/>   <img src ="https://user-images.githubusercontent.com/90010213/146630858-ee038754-e293-4347-98d6-4ed6ee31fdac.jpg" width = "220" height = "450"/>
