@@ -1,6 +1,6 @@
 # Street Sweepr Mania
 ## 2020
-
+ 
 <img src ="https://user-images.githubusercontent.com/90010213/146630577-fff43a01-0e02-48ea-8d5c-40a7bdaddb4a.png" width="100" height = "100"/>
 Street Sweeper Mania was released to the App Store on April 13, 2020. It has recieved:
 
